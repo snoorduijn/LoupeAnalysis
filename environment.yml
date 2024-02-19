@@ -4,3 +4,7 @@ channels:
 dependencies:
   - python=3.8
   - geopandas
+  - numpy
+  - pandas
+  - datetime
+  - dateutil
