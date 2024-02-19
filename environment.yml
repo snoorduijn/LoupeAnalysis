@@ -3,6 +3,6 @@ channels:
   - conda-forge
 dependencies:
   - python=3.8
-  - geopandas
-  - numpy
-  - pandas
+  - geopandas=0.14.0
+  - numpy=1.22.4
+  - pandas=2.1.0
