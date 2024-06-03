@@ -75,11 +75,22 @@ loupeX_df = loupeX_df.set_index('time')
 catalyst_fn = '2024-02-13-Kartoo.csv'
 time_coln, y_coln, x_coln, z_coln = "Gnss DateTime (Local Time)"," Northing(m)"," Easting(m)"," Height MSL(m)"
 
-catalyst_df = pd.read_csv(catalyst_fn)[[time_coln, y_coln, x_coln, z_coln]]       
-t = catalyst_df[time_coln].tolist()[0]         
+catalyst_df = pd.read_csv(catalyst_fn)[[time_coln, y_coln, x_coln, z_coln]]   
+dt_format = '%d/%m/%Y %I:%M:%S %p (%Z%z)' 
+t = catalyst_df[time_coln].tolist()[0]    
+# check datetime format compatability
+try:
+    dum = datetime.strptime(t, dt_format)
+    print("File datetime format able to be converted!")
+except ValueError:
+    print('Check datetime format in file')
+    exit
+
 # the colons in the "14/09/2023 12:57:27 PM (UTC+12:00)" needs to be removed to allow datetime.strptime to recognise the UTC timezone: https://protect-au.mimecast.com/s/jggLCL7EAOCwrkXAhmfJvX?domain=docs.python.org
-dt_format = '%d/%m/%Y %I:%M:%S %p (%Z%z)'  # 13/02/2024 2:28:03 PM (UTC+10.5:30) -> "14/09/2023 12:57:27 PM (UTC+1200)"   
-catalyst_df[time_coln] = [datetime.strptime(t[:-6]+t[-3:], dt_format) for t in catalyst_df[time_coln]]   
+#dt_format = '%d/%m/%Y %I:%M:%S %p (%Z%z)'  # 13/02/2024 2:28:03 PM (UTC+10.5:30) -> "14/09/2023 12:57:27 PM (UTC+1200)"   
+#catalyst_df[time_coln] = [datetime.strptime(t[:-6]+t[-3:], dt_format) for t in catalyst_df[time_coln]]   
+catalyst_df[time_coln] = [datetime.strptime(t, dt_format) for t in catalyst_df[time_coln]]   
+print(catalyst_df[time_coln][:10])
 
 catalyst_df = (catalyst_df.assign(time_utc=lambda df: 
                         df[time_coln].dt.tz_convert('UTC'))
